@@ -5,6 +5,7 @@ import { defineStore } from 'pinia';
 export const useGameStore = defineStore('game', {
   state: () => ({
     ballSpeedMultiplier : 1,
+    mistakes: 0,
     scoreMutliplier : 1,
     score : 0,
     bricksMultiplier: 1,
@@ -13,11 +14,14 @@ export const useGameStore = defineStore('game', {
     isBallSend: false,
     timeCount: 0,
     restartGameStatut : false,
-    playerCoins: 0,
+
   }),
   getters: {
     newBallSpeedMutliplier(state: { ballSpeedMultiplier : number}){
       return state.ballSpeedMultiplier
+    },
+    newMistakes(state: {mistakes: number}){
+      return state.mistakes;
     },
     newScoreMultiplier(state: {scoreMutliplier : number}){
       return state.scoreMutliplier;
@@ -43,31 +47,36 @@ export const useGameStore = defineStore('game', {
     newRestartGameStatut(state: {restartGameStatut: boolean}){
       return state.restartGameStatut;
     },
-    newPlayerCoins(state: {playerCoins: number}){
-      return state.playerCoins;
-    },
   },
   actions: {
     speedUpBall() {
-      this.ballSpeedMultiplier = this.ballSpeedMultiplier * 1.01;
+      if (this.ballSpeedMultiplier < 23) {
+        this.ballSpeedMultiplier = this.ballSpeedMultiplier * 1.01;
+      }
+      this.mistakes += 1;
+    },
+    speedDownBall(){
+      if(this.ballSpeedMultiplier > 1.25) {
+        this.ballSpeedMultiplier -= 0.5;
+      }
     },
     stopBall(){
       this.ballSpeedMultiplier = 0;
     },
     multiplyScore(){
-      this.scoreMutliplier = this.scoreMutliplier * 2;
+      this.scoreMutliplier *=  2;
     },
     addToScore(bonus: number){
-      this.score = this.score + (bonus * this.scoreMutliplier);
+      this.score += (bonus * this.scoreMutliplier);
     },
     countScore(){
-      this.score = this.score + this.scoreMutliplier;
+      this.score += this.scoreMutliplier;
     },
     countTime(){
-      this.timeCount = this.timeCount + 1
+      this.timeCount += 1
     },
     speedUpBricks(){
-      this.bricksMultiplier = this.bricksMultiplier * 1.1;
+      this.bricksMultiplier *= 1.1;
     },
     addNewFoundWord(word: string){
       this.newFoundWords.push(word)

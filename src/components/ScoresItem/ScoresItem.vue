@@ -1,7 +1,9 @@
 
 <template>
-  <p>Score{{ (score/10).toFixed(0) }}</p>
-  <p>Multiplicateur de score : {{ multiplier }}</p>
+  <v-card>
+    <p>Score{{ (score/10).toFixed(0) }}</p>
+    <p>Multiplicateur de score : {{ multiplier }}</p>
+  </v-card>
 </template>
 <script setup lang="ts">
 import {computed} from "vue";

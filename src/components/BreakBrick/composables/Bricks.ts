@@ -1,14 +1,14 @@
 // Logique de création des briques
-import {Ref} from "vue";
+import {ref} from "vue";
+import {gameWidth} from "@/components/BreakBrick/composables/GameStructure";
 
-export function useSetupBricks(
-  nbBriques: number,
-  brickWidth: number,
-  gameWidth: number,
-  brickLineCount: number,
-  brickHeight: number,
-  bricks: Ref<[{x:number, y: number, active: boolean}]>
-) {
+export const bricks = ref([{x:0, y: 0, active: true}]);
+export const brickWidth = 50;
+export const brickHeight = 20;
+export const nbBriques = (gameWidth/brickWidth)*5;
+export let brickLineCount = 0;
+
+export function useSetupBricks() {
   let brickXPosition = 0;
   let brickYPosition = 0;
   for(let i = 0; i < nbBriques; i++){
@@ -25,13 +25,7 @@ export function useSetupBricks(
   }
 }
 
-export function useNewBrickLine(
-  brickLineCount: number,
-  gameWidth: number,
-  brickWidth: number,
-  bricks: Ref<[{x:number, y: number, active: boolean}]>
-
-){
+export function useNewBrickLine(){
   brickLineCount = brickLineCount + 1;
   let brickXPosition = 0;
   const nbNouvellesBriques = gameWidth/brickWidth;

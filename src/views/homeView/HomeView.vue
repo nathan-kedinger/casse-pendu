@@ -25,6 +25,11 @@
               </v-card>
             </v-col>
           </v-row>
+          <v-row>
+            <v-col>
+              <BonusItem/>
+            </v-col>
+          </v-row>
         </v-col>
         <v-col cols="10" >
           <BreakBrickView />
@@ -42,22 +47,20 @@
 
 <script lang="ts" setup>
   import BreakBrickView from "@/components/BreakBrick/BreakBrickItem.vue";
-  import { useGameStore } from '@/store/app';
-  import {computed} from "vue";
-  import PenduViewItem from "@/components/PenduIItem/PenduViewItem.vue";
+  import PenduViewItem from "@/components/PenduItem/PenduViewItem.vue";
   import ScoresItem from "@/components/ScoresItem/ScoresItem.vue";
   import FoundWordsItem from "@/components/FoundWordsItem/FoundWordsItem.vue";
+  import BonusItem from "@/components/BonusItem/BonusItem.vue";
 
-  const store = useGameStore();
 
   // Exemple de mise à jour de l'état actif du jeu
 
   // TODO - Ajouter des bonus à acheter (raquette plus grande)
-  // TODO - Regler problème de saturation des briques
+  // TODO - Regler problème de saturation des briques et de ligne vide lors de l'apparition
   // TODO - Gérer l'enregistrement des scores des joueurs
   // TODO - Améliorer le visuel : Changer l'apparence des briques, balle et raquette
 
-
+  // TODO - Changer la déclaration des variables du store de place et les éléments inhérants à la logique structurelle
 
 
   //"Des messages cryptés sont envoyés par l'ennemi. Vous devez décrypter ces mots pour gagner de la puissance stratégique sur eux.

@@ -1,14 +1,16 @@
 <template>
   <v-card
-    width="250"
-    theme="light">
+    width="80vw"
+    height="10vh"
+    theme="light"
+  >
     <p> {{ motAafficher.toString().replaceAll(',', ' ') }} {{nombreErreurs}} </p>
   </v-card>
 
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from 'vue'
+import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {useGameStore} from '@/store/app';
 import axios from 'axios'
 
@@ -16,7 +18,9 @@ import axios from 'axios'
 let lettreChoisie = ref('');
 const motATrouver = ref('');
 let arrayMotATrouver= ref([]);
-let nombreErreurs = ref(0);
+const nombreErreurs = computed(()=>
+ store.newMistakes
+);
 let nombreLettreTrouvees = ref(0);
 const dictionnaire = ref([]);
 const store = useGameStore();
@@ -57,7 +61,6 @@ function validerMot() {
           isLetter = true;
           // Comparaison de la longueur du mot et du nombre de bonnes lettres trouvées pour valider le mot
           if (nombreLettreTrouvees.value == arrayMotATrouver.value.length) {
-            console.log('You win')
             // Ajout de points
             // Appel de la méthode qui efface le mot trouvé et en affiche un nouveau
             isMotTrouve = true;
@@ -78,8 +81,9 @@ function validerMot() {
   // Réinitialisation de l'
   lettreChoisie.value = '';
   i=0;
-  if(!isLetter) nombreErreurs.value ++;
-  store.speedUpBall()
+  if(!isLetter) {
+    store.speedUpBall()
+  }
   isLetter = false;
 }
 

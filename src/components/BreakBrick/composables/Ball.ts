@@ -1,18 +1,31 @@
-import {Ref, UnwrapRef} from "vue";
+import {computed, ref} from "vue";
 import {useGameStore} from "@/store/app";
+import {paddlePosition, paddleWidth} from "@/components/BreakBrick/composables/Paddle";
+import {gameHeight, gameStore} from "@/components/BreakBrick/composables/GameStructure";
 
-export function useChangeBallDirection(
-  isBallSend: Ref<boolean>,
-  ballPosition: Ref<UnwrapRef<{ x: number, y: number }>>,
-  paddlePosition: Ref<UnwrapRef<{ x: number, y: number }>>,
-  paddleWidth: number,
-  xRight: Ref<boolean>,
-  yDown: Ref<boolean>,
-  ballSpeed: Ref<UnwrapRef<{ x: number, y: number }>>
-){
+export const isBallSend = computed(()=>
+  gameStore.newIsBallSend
+);
+export const ballSize = 30;
+export const halfBall = ballSize/2;
+
+export const modifAngleX = ref(0);
+export const modifAngleY = ref(0);
+export const ballSpeed = computed(() => {
+  return {
+    x: Math.min(Math.sqrt(modifAngleX.value) * gameStore.newBallSpeedMutliplier, 0.5 * gameStore.newBallSpeedMutliplier),
+    y: Math.max((modifAngleY.value ) * gameStore.newBallSpeedMutliplier, 0.5 * gameStore.newBallSpeedMutliplier)
+  };
+});
+export const xRight = ref(true);
+export const yDown = ref(true);
+export const ballPosition = ref({
+  x: paddlePosition.value.x + paddleWidth.value/2 + halfBall,
+  y: paddlePosition.value.y - 1}); // Position initiale de la balle
+export function useChangeBallDirection(){
   // Position de la balle en début de jeu avant l'envoi ?
   if(!isBallSend.value){
-    ballPosition.value.x = paddlePosition.value.x + paddleWidth/2 ;
+    ballPosition.value.x = paddlePosition.value.x + paddleWidth.value/2 ;
     ballPosition.value.y = paddlePosition.value.y - 1
   }
   // Direction abcisses
@@ -28,10 +41,7 @@ export function useChangeBallDirection(
     ballPosition.value.y += ballSpeed.value.y
   }
 }
-export function useOutOfBound(
-  ballPosition: Ref<UnwrapRef<{ x: number, y: number }>>,
-  gameHeight: number
-){
+export function useOutOfBound(){
   const store = useGameStore();
   if (ballPosition.value.y >= gameHeight ){
     store.changeGameStatute();

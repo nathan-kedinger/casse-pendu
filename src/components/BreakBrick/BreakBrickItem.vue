@@ -3,7 +3,8 @@
     <v-card
       :width = gameWidth
       :height = gameHeight
-      theme="light">
+      theme="light"
+      image="@/components/BreakBrick/assets/fond-jeu.png">
       <div v-if="gameOn">
         <div id="bricks">
           <div v-for="(brick, index) in bricks" :key="index">
@@ -26,9 +27,9 @@
         >
         </v-card>
         <v-card id="paddle"
+                :width="paddleWidth"
                 :style="{
                   left: paddlePosition.x + 'px',
-                  width: paddleWidth + 'px',
                   bottom: paddlePosition.y
               }"
         >
@@ -42,114 +43,37 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted, computed, watch} from 'vue';
-import { useGameStore } from '@/store/app';
-
+import {onMounted, onUnmounted, watch} from 'vue';
 import {
-  useBallReboundBrick,
-  useBallReboundPaddleAngle,
-  useBallReboundPaddleHorizontaly,
-  useBallReboundPaddleVerticaly, useBallReboundWall
-} from "@/components/BreakBrick/composables/Rebound";
-import{
+  gameHeight, gameLoop,
+  gameOn,
+  gameStore, gameWidth,
+  handleKeydown,
+  handleKeyup,
+  restartGame,
+  timeCount
+} from "@/components/BreakBrick/composables/GameStructure";
+import GameOver from "@/components/GameOverItem/GameOverItem.vue";
+import {
+  brickHeight,
+  bricks,
   useNewBrickLine,
   useSetupBricks
 } from "@/components/BreakBrick/composables/Bricks";
-import GameOver from "@/components/GameOverItem/GameOverItem.vue";
-import {usePaddleControls, useUpdatePaddlePosition} from "@/components/BreakBrick/composables/Paddle";
-import {useChangeBallDirection, useOutOfBound} from "@/components/BreakBrick/composables/Ball";
-// Import du store
-const store = useGameStore();
-
-// Fenêtre du jeu
-const gameWidth = 800;
-const gameHeight = 600;
-
-// Briques
-const bricks = ref([{x:0, y: 0, active: true}]);
-const brickWidth = 50;
-const brickHeight = 20;
-let nbBriques = (gameWidth/brickWidth)*5;
-let brickLineCount = 0;
-
-// Raquette
-const paddleWidth = 150;
-const paddleHeight = 20;
-const paddlePosition = ref({ x: gameWidth / 2, y: gameHeight - paddleHeight - 15}); // Position initiale de la raquette
-const isMovingLeft = ref(false);
-const isMovingRight = ref(false);
-const paddleSpeed = 5; // Vitesse de déplacement de la raquette
-// Balle
-let isBallSend = computed(()=>
-  store.newIsBallSend
-);
-const ballSize = 30;
-const halfBall = ballSize/2;
-const ballPosition = ref({
-  x: paddlePosition.value.x + paddleWidth/2 + halfBall,
-  y: paddlePosition.value.y - 1}); // Position initiale de la balle
-const modifAngleX = ref(0);
-const modifAngleY = ref(0);
-const ballSpeed = computed(() => {
-  return {
-    x: Math.sqrt(modifAngleX.value) * store.newBallSpeedMutliplier,
-    y: (modifAngleY.value ) * store.newBallSpeedMutliplier
-  };
-});
-let xRight = ref(true);
-let yDown = ref(true);
-
-// Logique
-const {handleKeydown, handleKeyup} = usePaddleControls(isMovingLeft, isMovingRight, isBallSend, modifAngleY)
-
-let gameOn = computed(()=>
-  store.newGameOn
-);
-const timeCount = computed(()=>
-store.newTimeCount
-);
-const restartGame = computed(()=>
-  store.newRestartGameStatut
-)
-
-// Méthode centrale : Gestion de la Boucle permettant de réactualiser le jeu à chaque frame
-function gameLoop() {
-  // Arrêt du jeu lorsque les briques atteignent la hauteur de la raquette
-  if((brickLineCount + 3) * brickHeight  >= gameHeight){
-    store.changeGameStatute();
-    store.stopBall();
-  }
-  const reboundLogic = useBallReboundPaddleAngle(
-    ballPosition,
-    paddlePosition,
-    halfBall,
-    paddleWidth,
-    paddleHeight,
-    modifAngleX,
-    modifAngleY
-  )
-  modifAngleX.value = reboundLogic.modifAngleX.value;
-  modifAngleY.value = reboundLogic.modifAngleY.value;
-
-  useChangeBallDirection(isBallSend, ballPosition, paddlePosition, paddleWidth, xRight, yDown, ballSpeed);
-  useUpdatePaddlePosition(isMovingRight, isMovingLeft, paddlePosition, paddleSpeed, gameWidth, paddleWidth);
-  useBallReboundPaddleVerticaly(ballPosition, paddlePosition, halfBall, paddleWidth, paddleHeight, yDown);
-  useBallReboundPaddleHorizontaly(ballPosition, paddlePosition, halfBall, paddleWidth, paddleHeight, xRight)
-  useBallReboundWall(ballPosition, gameWidth, ballSize, xRight, yDown);
-  useBallReboundBrick(ballPosition, halfBall, bricks, brickWidth, brickHeight, yDown, xRight);
-  useOutOfBound(ballPosition, gameHeight);
-  if(gameOn.value){
-    store.countScore();
-    store.countTime();
-    // Rappel de la méthode elle-même par un callback
-    requestAnimationFrame(gameLoop);
-  }
-}
+import {
+  paddlePosition,
+  paddleWidth,
+} from "@/components/BreakBrick/composables/Paddle";
+import {
+  ballPosition, halfBall,
+  modifAngleX,
+  modifAngleY,
+} from "@/components/BreakBrick/composables/Ball";
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('keyup', handleKeyup);
-  useSetupBricks(nbBriques,brickWidth,gameWidth, brickLineCount, brickHeight, bricks)
+  useSetupBricks()
   requestAnimationFrame(gameLoop);
 });
 onUnmounted(() => {
@@ -159,28 +83,27 @@ onUnmounted(() => {
 
 // Logique d'ajout de lignes de briques
 watch(timeCount,()=>{
-  let newLineTrigger = timeCount.value % (3000 / store.newBricksMultiplier)
+  let newLineTrigger = timeCount.value % (3000 / gameStore.newBricksMultiplier)
     if(Math.round(newLineTrigger) === 0){
-      store.speedUpBricks()
-      useNewBrickLine(brickLineCount, gameWidth, brickWidth, bricks)
+      gameStore.speedUpBricks()
+      useNewBrickLine()
       bricks.value.forEach((brique)=>{
         brique.y = brique.y + brickHeight;
       })
     }
   }
 )
-
+// Logique de réinitialisation du jeu
 watch(restartGame, ()=>{
-  if (store.newGameOn && restartGame) {
-    store.changeRestartGameStatute()
+  if (gameStore.newGameOn && restartGame) {
+    gameStore.changeRestartGameStatute()
     bricks.value = [];
-    useSetupBricks(nbBriques,brickWidth,gameWidth, brickLineCount, brickHeight, bricks)
+    useSetupBricks()
     modifAngleX.value = 0;
     modifAngleY.value = 0;
     requestAnimationFrame(gameLoop);
   }
 })
-
 </script>
 
 <style scoped>
