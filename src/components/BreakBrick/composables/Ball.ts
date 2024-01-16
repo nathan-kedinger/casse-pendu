@@ -4,6 +4,7 @@ import {paddlePosition, paddleWidth} from "@/components/BreakBrick/composables/P
 import {nombreErreurs} from "@/components/PenduItem/composables/Words";
 import {gameHeight} from "@/components/BreakBrick/helpers/GameUtilities";
 import {gameLoop} from "@/components/BreakBrick/composables/GameStructure";
+import {addNewScore} from "@/components/RankingItem/composables/ScoresLogic";
 
 export const ballSize = 30;
 export const halfBall = ballSize/2;
@@ -73,6 +74,7 @@ export function useOutOfBound(){
   })
   const allBallsOut = balls.value.find((ball)=> ball.ballOut === false)
   if(allBallsOut === undefined){
+    addNewScore(gameStore.newScore);
     gameStore.endGame();
   }
 }

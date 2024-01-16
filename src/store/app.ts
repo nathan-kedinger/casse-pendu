@@ -17,7 +17,7 @@ export const useGameStore = defineStore('game', {
       return state.scoreMutliplier;
     },
     newScore(state: {score: number}){
-      return state.score;
+      return Math.round(state.score/100);
     },
     newGameOn(state: {gameOn: boolean}){
       return state.gameOn;

@@ -1,17 +1,21 @@
-<template >
+<template>
   <v-card
     class="background-image py- px-auto"
     image="@/views/homeView/assets/fond-ecran.png"
     theme="dark">
       <v-row>
         <v-col cols="1"/>
-        <v-col cols="11">
+        <v-col cols="10">
           <PenduViewItem/>
+        </v-col>
+        <v-col cols="1">
+          <button>
+            <RouterLink to="classement">Classement</RouterLink>
+          </button>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="1"/>
-        <v-col cols="2">
+        <v-col cols="2" class="ms-6">
           <v-row>
             <v-card
               theme="light">
@@ -46,14 +50,11 @@
   import BonusItem from "@/components/BonusItem/BonusItem.vue";
 
 
-  // Exemple de mise à jour de l'état actif du jeu
 
-  // TODO - Ajouter des bonus à acheter (raquette plus grande)
   // TODO - Gérer l'enregistrement des scores des joueurs
   // TODO - Améliorer le visuel : Changer l'apparence des briques, balle et raquette
-  // TODO - Créer un méthode de remise à zéro du jeu
-  // TODO - Bonus => possibilité de revenir en arrière sur un bonus
-  // TODO - Ajouter la logique de gain de pièces
+  // TODO - Améliorer la logique de gain de pièces
+  // TODO - Ajouter la logique d'utilisation des pièces
 
   // TODO - Version en anglais
 

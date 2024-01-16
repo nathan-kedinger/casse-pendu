@@ -4,7 +4,7 @@ import {fetchRandomWord, foundWords, nombreErreurs, resetWord} from "@/component
 import {
   balls,
   ballSpeedMultiplier,
-  newBall, useBallControls,
+  newBall,
   useChangeBallDirection,
   useOutOfBound
 } from "@/components/BreakBrick/composables/Ball";

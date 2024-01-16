@@ -54,25 +54,20 @@ import {
 } from "@/components/BreakBrick/composables/Bricks";
 import {
   paddlePosition, paddleWidth,
-  usePaddleControls, useUpdatePaddlePosition,
+  usePaddleControls
 } from "@/components/BreakBrick/composables/Paddle";
 import GameOver from "@/components/GameOverItem/GameOverItem.vue";
 import {
   balls,
   halfBall, stopAllBalls,
-   useBallControls, useChangeBallDirection, useOutOfBound,
+   useBallControls
 } from "@/components/BreakBrick/composables/Ball";
-import {
-  useBallReboundBrick, useBallReboundPaddleAngle,
-  useBallReboundPaddleHorizontally,
-  useBallReboundPaddleVertically, useBallReboundWall
-} from "@/components/BreakBrick/composables/Rebound";
 import {gameHeight, gameWidth} from "@/components/BreakBrick/helpers/GameUtilities";
 import {gameLoop} from "@/components/BreakBrick/composables/GameStructure";
+import {addNewScore} from "@/components/RankingItem/composables/ScoresLogic";
 
 // Logique
 const gameStore = useGameStore();
-
 const gameOn = computed(()=>
   gameStore.newGameOn
 );
@@ -83,8 +78,6 @@ const restartGame = computed(()=>
   gameStore.newRestartGameStatute
 )
 const {handleKeydown, handleKeyup} = usePaddleControls()
-
-
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
@@ -103,8 +96,8 @@ watch(timeCount,()=>{
   let newLineTrigger = timeCount.value % (3000 / bricksMultiplier.value)
   let bricksLimit = bricks.value.filter((brique)=> brique.y >= 540 && brique.active === true)
   if(bricksLimit.length > 0) {
+    addNewScore(gameStore.newScore);
     gameStore.endGame();
-
     stopAllBalls();
   } else if(Math.round(newLineTrigger) === 0 && gameStore.newGameOn){
       speedUpBricks()

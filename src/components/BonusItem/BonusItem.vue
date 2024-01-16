@@ -12,7 +12,7 @@
     </v-btn>
     <v-btn
       :disable="paddleWidth >= 190"
-      @click="enlargePaddle()">
+      @click="reducePaddle()">
       Réduir la raquette
     </v-btn>
     <v-btn
@@ -40,7 +40,7 @@ import {
   enlargePaddle,
   fastUpPaddle,
   paddleSpeed,
-  paddleWidth,
+  paddleWidth, reducePaddle,
   slowDownPaddle
 } from "@/components/BreakBrick/composables/Paddle";
 import {useGameStore} from "@/store/app";
