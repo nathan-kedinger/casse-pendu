@@ -1,50 +1,131 @@
-import {computed, ref} from "vue";
 import {useGameStore} from "@/store/app";
+import {ref} from "vue";
 import {paddlePosition, paddleWidth} from "@/components/BreakBrick/composables/Paddle";
-import {gameHeight, gameStore} from "@/components/BreakBrick/composables/GameStructure";
+import {nombreErreurs} from "@/components/PenduItem/composables/Words";
+import {gameHeight} from "@/components/BreakBrick/helpers/GameUtilities";
+import {gameLoop} from "@/components/BreakBrick/composables/GameStructure";
 
-export const isBallSend = computed(()=>
-  gameStore.newIsBallSend
-);
 export const ballSize = 30;
 export const halfBall = ballSize/2;
+export const ballSpeedMultiplier = ref(2);
 
-export const modifAngleX = ref(0);
-export const modifAngleY = ref(0);
-export const ballSpeed = computed(() => {
-  return {
-    x: Math.min(Math.sqrt(modifAngleX.value) * gameStore.newBallSpeedMutliplier, 0.5 * gameStore.newBallSpeedMutliplier),
-    y: Math.max((modifAngleY.value ) * gameStore.newBallSpeedMutliplier, 0.5 * gameStore.newBallSpeedMutliplier)
-  };
-});
-export const xRight = ref(true);
-export const yDown = ref(true);
-export const ballPosition = ref({
-  x: paddlePosition.value.x + paddleWidth.value/2 + halfBall,
-  y: paddlePosition.value.y - 1}); // Position initiale de la balle
+// Position initiale de la balle
+export const balls= ref([{
+  xRight : true,
+  yDown : false,
+  isBallSend: false,
+  ballSpeed : {
+    x: Math.min(Math.sqrt(0) * ballSpeedMultiplier.value, 0.5 * ballSpeedMultiplier.value),
+    y: Math.max((1) * ballSpeedMultiplier.value, 0.5 * ballSpeedMultiplier.value)
+  },
+  ballPosition :{
+    x: paddlePosition.value.x + paddleWidth.value/2 + halfBall,
+    y: paddlePosition.value.y - 1
+  },
+  ballOut: false
+}])
 export function useChangeBallDirection(){
-  // Position de la balle en début de jeu avant l'envoi ?
-  if(!isBallSend.value){
-    ballPosition.value.x = paddlePosition.value.x + paddleWidth.value/2 ;
-    ballPosition.value.y = paddlePosition.value.y - 1
-  }
-  // Direction abcisses
-  if (xRight.value){
-    ballPosition.value.x += ballSpeed.value.x
-  } else {
-    ballPosition.value.x -= ballSpeed.value.x
-  }
-  // Direction ordonnées
-  if (!yDown.value){
-    ballPosition.value.y -= ballSpeed.value.y
-  } else {
-    ballPosition.value.y += ballSpeed.value.y
+
+    balls.value.forEach((ball)=>{
+      // Position de la balle en début de jeu avant l'envoi
+      if(!ball.isBallSend){
+        ball.ballPosition.x = paddlePosition.value.x + paddleWidth.value/2 ;
+        ball.ballPosition.y = paddlePosition.value.y - 1
+      }
+      // Direction abcisses
+      if (ball.xRight){
+        ball.ballPosition.x += ball.ballSpeed.x
+      } else {
+        ball.ballPosition.x -= ball.ballSpeed.x
+      }
+      // Direction ordonnées
+      if (!ball.yDown){
+        ball.ballPosition.y -= ball.ballSpeed.y
+      } else {
+        ball.ballPosition.y += ball.ballSpeed.y
+      }
+    })
+}
+
+export function useBallControls() {
+  return (event: KeyboardEvent) => {
+    balls.value.forEach((ball)=>{
+      if (event.key === "ArrowUp" && !ball.isBallSend) {
+        if(!useGameStore().newGameBegin){
+          useGameStore().beginGame();
+          gameLoop();
+        }
+        ball.ballSpeed.y = 0.9;
+        ball.ballSpeed.x = 0.1;
+        ball.isBallSend = true;
+      }
+    })
+  };
+}
+
+export function useOutOfBound(){
+  const gameStore = useGameStore();
+  balls.value.forEach((ball)=>{
+    if (ball.ballPosition.y >= gameHeight + halfBall ){
+      ball.ballOut = true
+      stopBall(ball.ballSpeed);
+    }
+  })
+  const allBallsOut = balls.value.find((ball)=> ball.ballOut === false)
+  if(allBallsOut === undefined){
+    gameStore.endGame();
   }
 }
-export function useOutOfBound(){
-  const store = useGameStore();
-  if (ballPosition.value.y >= gameHeight ){
-    store.changeGameStatute();
-    store.stopBall();
+
+// Crée une nouvelle balle
+export function newBall(){
+  const activeBalls = balls.value.filter((ball)=>
+    !ball.ballOut
+  )
+
+  console.log(activeBalls)
+  const newBall = {
+    xRight: true,
+    yDown: true,
+    isBallSend : false,
+    ballSpeed: {
+      x: Math.min(Math.sqrt(0) * ballSpeedMultiplier.value, 0.5 * ballSpeedMultiplier.value),
+      y: Math.max(1 * ballSpeedMultiplier.value, 0.5 * ballSpeedMultiplier.value)
+    },
+    ballPosition: {
+      x: paddlePosition.value.x + paddleWidth.value / 2 - halfBall, // Ajustez en fonction de la taille de votre balle
+      y: paddlePosition.value.y - 1
+    },
+    ballOut: false
+  };
+  if(activeBalls.length < 15){
+    balls.value.push(newBall);
   }
+}
+
+// Accélère la vitesse de la balle
+export function speedUpBall() {
+  if (ballSpeedMultiplier.value < 23) {
+    ballSpeedMultiplier.value = ballSpeedMultiplier.value * 1.01;
+  }
+  nombreErreurs.value += 1;
+}
+
+// Ralenti la vitesse de la balle
+export function speedDownBall(){
+  if(ballSpeedMultiplier.value > 1.25) {
+    ballSpeedMultiplier.value -= 0.5;
+  }
+}
+
+// Arrête toutes les balles
+export function stopAllBalls(){
+  ballSpeedMultiplier.value = 0;
+}
+
+// Arrêter une balle
+
+export function stopBall(ballSpeed: {x: number, y: number}){
+  ballSpeed.x = 0;
+  ballSpeed.y = 0;
 }

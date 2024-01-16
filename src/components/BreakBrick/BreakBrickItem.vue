@@ -18,13 +18,14 @@
             </div>
           </div>
         </div>
-        <v-card id="ball"
+        <v-card v-for="(ball, index) in balls"
+                :key="index"
+                id="ball"
                 image="@/components/BreakBrick/assets/balle-laser-violette.svg"
                 :style="{
-                  left: (ballPosition.x - halfBall) + 'px',
-                  top: (ballPosition.y - halfBall) + 'px'
-                }"
-        >
+              left: (ball.ballPosition.x - halfBall) + 'px',
+              top: (ball.ballPosition.y - halfBall) + 'px'
+            }">
         </v-card>
         <v-card id="paddle"
                 :width="paddleWidth"
@@ -43,37 +44,53 @@
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, watch} from 'vue';
-import {
-  gameHeight, gameLoop,
-  gameOn,
-  gameStore, gameWidth,
-  handleKeydown,
-  handleKeyup,
-  restartGame,
-  timeCount
-} from "@/components/BreakBrick/composables/GameStructure";
-import GameOver from "@/components/GameOverItem/GameOverItem.vue";
+import {useGameStore} from "@/store/app";
+import {computed, onMounted, onUnmounted, watch} from 'vue';
 import {
   brickHeight,
-  bricks,
+  bricks, bricksMultiplier, speedUpBricks,
   useNewBrickLine,
   useSetupBricks
 } from "@/components/BreakBrick/composables/Bricks";
 import {
-  paddlePosition,
-  paddleWidth,
+  paddlePosition, paddleWidth,
+  usePaddleControls, useUpdatePaddlePosition,
 } from "@/components/BreakBrick/composables/Paddle";
+import GameOver from "@/components/GameOverItem/GameOverItem.vue";
 import {
-  ballPosition, halfBall,
-  modifAngleX,
-  modifAngleY,
+  balls,
+  halfBall, stopAllBalls,
+   useBallControls, useChangeBallDirection, useOutOfBound,
 } from "@/components/BreakBrick/composables/Ball";
+import {
+  useBallReboundBrick, useBallReboundPaddleAngle,
+  useBallReboundPaddleHorizontally,
+  useBallReboundPaddleVertically, useBallReboundWall
+} from "@/components/BreakBrick/composables/Rebound";
+import {gameHeight, gameWidth} from "@/components/BreakBrick/helpers/GameUtilities";
+import {gameLoop} from "@/components/BreakBrick/composables/GameStructure";
+
+// Logique
+const gameStore = useGameStore();
+
+const gameOn = computed(()=>
+  gameStore.newGameOn
+);
+const timeCount = computed(()=>
+  gameStore.newTimeCount
+);
+const restartGame = computed(()=>
+  gameStore.newRestartGameStatute
+)
+const {handleKeydown, handleKeyup} = usePaddleControls()
+
+
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('keyup', handleKeyup);
-  useSetupBricks()
+  window.addEventListener('keydown', useBallControls())
+  useSetupBricks();
   requestAnimationFrame(gameLoop);
 });
 onUnmounted(() => {
@@ -83,9 +100,14 @@ onUnmounted(() => {
 
 // Logique d'ajout de lignes de briques
 watch(timeCount,()=>{
-  let newLineTrigger = timeCount.value % (3000 / gameStore.newBricksMultiplier)
-    if(Math.round(newLineTrigger) === 0){
-      gameStore.speedUpBricks()
+  let newLineTrigger = timeCount.value % (3000 / bricksMultiplier.value)
+  let bricksLimit = bricks.value.filter((brique)=> brique.y >= 540 && brique.active === true)
+  if(bricksLimit.length > 0) {
+    gameStore.endGame();
+
+    stopAllBalls();
+  } else if(Math.round(newLineTrigger) === 0 && gameStore.newGameOn){
+      speedUpBricks()
       useNewBrickLine()
       bricks.value.forEach((brique)=>{
         brique.y = brique.y + brickHeight;
@@ -93,14 +115,11 @@ watch(timeCount,()=>{
     }
   }
 )
+
 // Logique de réinitialisation du jeu
 watch(restartGame, ()=>{
   if (gameStore.newGameOn && restartGame) {
     gameStore.changeRestartGameStatute()
-    bricks.value = [];
-    useSetupBricks()
-    modifAngleX.value = 0;
-    modifAngleY.value = 0;
     requestAnimationFrame(gameLoop);
   }
 })

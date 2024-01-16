@@ -1,7 +1,7 @@
 
 <template>
   <v-card>
-    <p>Score{{ (score/10).toFixed(0) }}</p>
+    <p>Score{{ (score/100).toFixed(0) }}</p>
     <p>Multiplicateur de score : {{ multiplier }}</p>
   </v-card>
 </template>

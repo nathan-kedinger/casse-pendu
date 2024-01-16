@@ -12,6 +12,8 @@ import App from './App.vue'
 
 // Composables
 import { createApp } from 'vue'
+// main.js ou main.ts
+import '@/assets/fonts/custom-font.css';
 
 const app = createApp(App)
 

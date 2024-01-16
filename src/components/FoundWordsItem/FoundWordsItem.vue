@@ -1,18 +1,17 @@
 <template>
   <v-card
-    width="200px"
-    height="200px"
+    width="230px"
+    height="230px"
     image="@/components/FoundWordsItem/assets/ecran.png">
-    <div v-for="(word,index) in store.newFoundWords" :key="index">
+    <div v-for="(word,index) in foundWords" :key="index">
       <p>{{ word }}</p>
     </div>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import {useGameStore} from "@/store/app";
+import {foundWords} from "@/components/PenduItem/composables/Words";
 
-const store = useGameStore();
 
 </script>
 

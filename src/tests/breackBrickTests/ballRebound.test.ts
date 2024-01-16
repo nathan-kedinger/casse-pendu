@@ -15,8 +15,8 @@ vi.mock('@/store/app', () => ({
 
 describe('useBallReboundPaddleAngle', () => {
   let
-    ballPosition,
-    paddlePosition,
+    ballPosition: Ref<UnwrapRef<{ x: number, y: number }>>,
+    paddlePosition: Ref<UnwrapRef<{ x: number, y: number }>>,
     halfBall: number,
     paddleWidth : Ref<UnwrapRef<number>>,
     paddleHeight : number,
@@ -36,7 +36,7 @@ describe('useBallReboundPaddleAngle', () => {
     ballPosition = ref({ x: 10, y: 580 });
     paddlePosition = ref({ x: 0, y: 580 });
 
-    useBallReboundPaddleAngle();
+    useBallReboundPaddleAngle(paddleWidth, ballPosition);
 
     expect(modifAngleX.value).toBe(0.65);
     expect(modifAngleY.value).toBe(0.1);
@@ -46,7 +46,7 @@ describe('useBallReboundPaddleAngle', () => {
     ballPosition = ref({ x: paddleWidth.value / 2, y: 580 });
     paddlePosition = ref({ x: 0, y: 580 });
 
-    useBallReboundPaddleAngle();
+    useBallReboundPaddleAngle(paddleWidth, ballPosition);
 
     expect(modifAngleX.value).toBe(0);
     expect(modifAngleY.value).toBe(0.75);
@@ -56,7 +56,7 @@ describe('useBallReboundPaddleAngle', () => {
     ballPosition = ref({ x: paddleWidth.value - 10, y: 580 });
     paddlePosition = ref({ x: 0, y: 580 });
 
-    useBallReboundPaddleAngle();
+    useBallReboundPaddleAngle(paddleWidth, ballPosition);
 
     expect(modifAngleX.value).toBe(0.65);
     expect(modifAngleY.value).toBe(0.1);
@@ -85,7 +85,7 @@ describe('useBallReboundWalls', () => {
   it('calculates top wall rebound to bottom : accurate', () => {
     ballPosition = ref({x: gameWidth / 2, y: 0});
 
-    useBallReboundWall();
+    useBallReboundWall(ballPosition);
 
     expect(xRight.value).false;
     expect(yDown.value).true;
@@ -94,7 +94,7 @@ describe('useBallReboundWalls', () => {
   it('calculates top wall rebound to bottom : too far', () => {
     ballPosition = ref({x: gameWidth / 2, y: 20});
 
-    useBallReboundWall();
+    useBallReboundWall(ballPosition);
 
     expect(xRight.value).false;
     expect(yDown.value).false;
@@ -103,7 +103,7 @@ describe('useBallReboundWalls', () => {
   it('calculates left wall rebound to right : accurate', () => {
     ballPosition = ref({x: 0, y: 300});
 
-    useBallReboundWall();
+    useBallReboundWall(ballPosition);
 
     expect(xRight.value).true;
     expect(yDown.value).false;
@@ -112,7 +112,7 @@ describe('useBallReboundWalls', () => {
   it('calculates left wall rebound to right : too far', () => {
     ballPosition = ref({x: (ballSize/2) + 1, y: 300});
 
-    useBallReboundWall();
+    useBallReboundWall(ballPosition);
 
     expect(xRight.value).false;
     expect(yDown.value).false;
@@ -122,7 +122,7 @@ describe('useBallReboundWalls', () => {
     ballPosition = ref({x: gameWidth, y: 300});
     xRight = ref(true);
 
-    useBallReboundWall();
+    useBallReboundWall(ballPosition);
 
     expect(xRight.value).false;
     expect(yDown.value).false;
@@ -132,7 +132,7 @@ describe('useBallReboundWalls', () => {
     ballPosition = ref({x: gameWidth - (ballSize / 2) + 1, y: 300});
     xRight = ref(true);
 
-    useBallReboundWall();
+    useBallReboundWall(ballPosition);
 
     expect(xRight.value).false;
     expect(yDown.value).false;
@@ -157,7 +157,7 @@ beforeEach(()=>{
     ballPosition = ref({x:0, y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleVertically();
+    useBallReboundPaddleVertically(paddleWidth, ballPosition);
 
     expect(yDown.value).false
   })
@@ -165,7 +165,7 @@ beforeEach(()=>{
     ballPosition = ref({x:-1, y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleVertically();
+    useBallReboundPaddleVertically(paddleWidth, ballPosition);
 
     expect(yDown.value).true
   })
@@ -173,7 +173,7 @@ beforeEach(()=>{
     ballPosition = ref({x:paddleWidth.value + halfBall, y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleVertically();
+    useBallReboundPaddleVertically(paddleWidth, ballPosition);
 
     expect(yDown.value).false
   })
@@ -181,7 +181,7 @@ beforeEach(()=>{
     ballPosition = ref({x:paddleWidth.value+ halfBall + 1, y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleVertically();
+    useBallReboundPaddleVertically(paddleWidth, ballPosition);
 
     expect(yDown.value).true
   })
@@ -206,7 +206,7 @@ describe('useBallReboundPaddleHorizontally', ()=>{
     ballPosition = ref({x:- halfBall, y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleHorizontally();
+    useBallReboundPaddleHorizontally(paddleWidth, ballPosition);
 
     expect(xRight.value).false
   })
@@ -214,7 +214,7 @@ describe('useBallReboundPaddleHorizontally', ()=>{
     ballPosition = ref({x:- halfBall - 1, y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleHorizontally();
+    useBallReboundPaddleHorizontally(paddleWidth, ballPosition);
 
     expect(xRight.value).true
   })
@@ -222,7 +222,7 @@ describe('useBallReboundPaddleHorizontally', ()=>{
     ballPosition = ref({x:paddleWidth.value/2 , y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleHorizontally();
+    useBallReboundPaddleHorizontally(paddleWidth, ballPosition);
 
     expect(xRight.value).false
   })
@@ -230,7 +230,7 @@ describe('useBallReboundPaddleHorizontally', ()=>{
     ballPosition = ref({x:paddleWidth.value/2  + 1, y: paddleHeight});
     paddlePosition = ref({x:0, y: paddleHeight});
 
-    useBallReboundPaddleHorizontally();
+    useBallReboundPaddleHorizontally(paddleWidth, ballPosition);
 
     expect(xRight.value).true
   })
@@ -240,7 +240,7 @@ describe('useBallReboundPaddleHorizontally', ()=>{
     // La balle va déjà vers la gauche et s'approche de la droite de la raquette mais la manque
     xRight.value = false
 
-    useBallReboundPaddleHorizontally();
+    useBallReboundPaddleHorizontally(paddleWidth, ballPosition);
 
     expect(xRight.value).false
   })
@@ -271,7 +271,7 @@ describe('useBallReboundBrick', () => {
     it('calculates bottom side brick rebound correctly', () => {
       ballPosition = ref({x: xs, y: 120}); // Position just below the brick
 
-      useBallReboundBrick();
+      useBallReboundBrick(ballPosition);
 
       expect(yDown.value).toBe(true); // Should rebound downwards
       expect(bricks.value[0].active).toBe(false); // Brick should be inactive
@@ -282,7 +282,7 @@ describe('useBallReboundBrick', () => {
     it('calculates top side brick rebound correctly', () => {
       ballPosition = ref({x: xs, y: 85}); // Position just above the brick
 
-      useBallReboundBrick();
+      useBallReboundBrick(ballPosition);
 
       expect(yDown.value).toBe(false); // Should rebound upwards
       expect(bricks.value[0].active).toBe(false); // Brick should be inactive
@@ -293,7 +293,7 @@ describe('useBallReboundBrick', () => {
     it('calculates right side brick rebound correctly', () => {
       ballPosition = ref({x: 165, y: xs}); // Position just to the right of the brick
 
-      useBallReboundBrick();
+      useBallReboundBrick(ballPosition);
 
       expect(xRight.value).toBe(true); // Should rebound to the right
       expect(bricks.value[0].active).toBe(false); // Brick should be inactive
@@ -304,7 +304,7 @@ testCasesL.forEach((xs)=>{
   it('calculates left side brick rebound correctly', () => {
     ballPosition = ref({ x: 85, y: xs }); // Position just to the left of the brick
 
-    useBallReboundBrick();
+    useBallReboundBrick(ballPosition);
 
     expect(xRight.value).false; // Should rebound to the left
     expect(bricks.value[0].active).toBe(false); // Brick should be inactive
