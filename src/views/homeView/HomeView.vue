@@ -49,13 +49,10 @@
   import FoundWordsItem from "@/components/FoundWordsItem/FoundWordsItem.vue";
   import BonusItem from "@/components/BonusItem/BonusItem.vue";
 
-
-
-  // TODO - Gérer l'enregistrement des scores des joueurs
   // TODO - Améliorer le visuel : Changer l'apparence des briques, balle et raquette
   // TODO - Améliorer la logique de gain de pièces
   // TODO - Ajouter la logique d'utilisation des pièces
-
+  // TODO - Réduire la longueur du dictionnaire (4 lettres < mot < 10 lettres)
   // TODO - Version en anglais
 
 

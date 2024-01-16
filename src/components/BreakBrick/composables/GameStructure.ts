@@ -18,7 +18,6 @@ import {
 } from "@/components/BreakBrick/composables/Rebound";
 import {useGameStore} from "@/store/app";
 
-
  // Méthode centrale : Gestion de la Boucle permettant de réactualiser le jeu à chaque frame
 export function gameLoop() {
 const gameStore = useGameStore();
@@ -31,7 +30,6 @@ const gameStore = useGameStore();
   useBallReboundWall();
   useBallReboundBrick();
   useOutOfBound();
-
 
   if(gameStore.newGameBegin){
     gameStore.countScore();
