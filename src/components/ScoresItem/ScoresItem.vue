@@ -1,8 +1,14 @@
 
 <template>
-  <v-card>
-    <p>Score{{ score }}</p>
-    <p>Multiplicateur de score : {{ multiplier }}</p>
+  <v-card
+  class="ma-carte-avec-image"
+  image="@/components/FoundWordsItem/assets/ecrans-internes.svg">
+    <p
+      class="personal-text-police-future"
+    >Score : {{ score }}</p>
+    <p
+      class="personal-text-police-future"
+    >Multiplicateur de score : {{ multiplier }}</p>
   </v-card>
 </template>
 <script setup lang="ts">

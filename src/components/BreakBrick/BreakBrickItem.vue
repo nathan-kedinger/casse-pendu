@@ -4,7 +4,8 @@
       :width = gameWidth
       :height = gameHeight
       theme="light"
-      image="@/components/BreakBrick/assets/fond-jeu.png">
+      image="@/components/BreakBrick/assets/fond-jeu.png"
+      >
       <div v-if="gameOn">
         <div id="bricks">
           <div v-for="(brick, index) in bricks" :key="index">

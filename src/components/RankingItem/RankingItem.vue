@@ -1,10 +1,23 @@
 <template>
-  <v-data-table :items="playersScores"></v-data-table>
+  <v-data-table
+    :headers="headers"
+    :items="users">
+  </v-data-table>
 </template>
 
 <script setup lang="ts">
+import {onMounted, Ref, ref} from "vue";
+const headers =  [
+  {title: 'Email', value: 'email'},
+  {title: 'Username', value: 'username'}
+]
+let users: Ref<LoginType[]> = ref([]);
 
-import {playersScores} from "@/components/RankingItem/helpers/PlayersScores";
+onMounted(async ()=> {
+  users.value = await getUsers();
+});
+import {LoginType} from "@/types/LoginType";
+import {getUsers} from "@/api/ApiUsers";
 </script>
 
 <style scoped>

@@ -1,5 +1,7 @@
 <template>
-  <v-card>
+  <v-card
+    class="personal-background"
+    image="@/components/FoundWordsItem/assets/ecrans-internes.svg">
     <v-btn
       :disabled="ballSpeedMultiplier <= 1.25"
       @click="speedDownBall()">

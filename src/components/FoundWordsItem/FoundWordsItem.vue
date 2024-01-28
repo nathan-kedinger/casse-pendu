@@ -2,9 +2,12 @@
   <v-card
     width="230px"
     height="230px"
-    image="@/components/FoundWordsItem/assets/ecran.png">
+    image="@/components/FoundWordsItem/assets/ecrans-internes.svg"
+    class="pa-10 ">
     <div v-for="(word,index) in foundWords" :key="index">
-      <p>{{ word }}</p>
+      <p
+      class="personal-text-police-future"
+      >{{ word }}</p>
     </div>
   </v-card>
 </template>
@@ -16,5 +19,4 @@ import {foundWords} from "@/components/PenduItem/composables/Words";
 </script>
 
 <style scoped>
-
 </style>

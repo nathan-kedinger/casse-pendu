@@ -3,8 +3,11 @@
     width="80vw"
     height="10vh"
     theme="light"
+    class="personal-background personal-border"
   >
-    <p class="text-police"> {{ motAafficher.toString().replaceAll(',', ' ') }} {{nombreErreurs}} </p>
+    <div class="d-flex justify-center mb-6">
+      <h1 class="personal-text-police-future personal-big-size "> {{ motAafficher.toString().replaceAll(',', ' ') }} {{nombreErreurs}} </h1>
+    </div>
   </v-card>
 
 </template>
@@ -38,8 +41,8 @@ onUnmounted(() => {
 });
 </script>
 <style scoped>
-  .text-police {
-    font-family: fasterstroker,sans-serif;
-  }
+
+
+
 </style>
 

@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="background-image py- px-auto"
-    image="@/views/homeView/assets/fond-ecran.png"
+    image="@/views/homeView/assets/fond-ecran.svg"
     theme="dark">
       <v-row>
         <v-col cols="1"/>
@@ -67,8 +67,5 @@
   background-repeat: no-repeat;
   width: 100vw;
   height: 100vh;
-}
-.main-border{
-   border-style: inset;
 }
 </style>

@@ -1,6 +1,6 @@
 @font-face {
-    font-family: 'fasterstroker';
-    src: url('./fasterstroker.otf') format('opentype');
-    font-weight: normal;
+    font-family: 'nulshock';
+    src: url('./nulshockbd.otf') format('opentype');
+    font-weight: bold;
     font-style: normal;
 }
