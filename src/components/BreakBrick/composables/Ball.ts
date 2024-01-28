@@ -9,6 +9,9 @@ import {addNewScore} from "@/components/RankingItem/composables/ScoresLogic";
 export const ballSize = 30;
 export const halfBall = ballSize/2;
 export const ballSpeedMultiplier = ref(2);
+export const priceBall = 20
+export const priceSpeedDownBall = 50
+
 
 // Position initiale de la balle
 export const balls= ref([{
@@ -80,12 +83,10 @@ export function useOutOfBound(){
 }
 
 // Crée une nouvelle balle
-export function newBall(){
+export function newBall(coins: number){
   const activeBalls = balls.value.filter((ball)=>
     !ball.ballOut
   )
-
-  console.log(activeBalls)
   const newBall = {
     xRight: true,
     yDown: true,
@@ -100,8 +101,9 @@ export function newBall(){
     },
     ballOut: false
   };
-  if(activeBalls.length < 15){
+  if(activeBalls.length < 15 && coins >= priceBall){
     balls.value.push(newBall);
+    useGameStore().removeCoins(priceBall)
   }
 }
 
@@ -115,8 +117,9 @@ export function speedUpBall() {
 
 // Ralenti la vitesse de la balle
 export function speedDownBall(){
-  if(ballSpeedMultiplier.value > 1.25) {
+  if(ballSpeedMultiplier.value > 1.25 && useGameStore().newPlayerCoins > priceSpeedDownBall) {
     ballSpeedMultiplier.value -= 0.5;
+    useGameStore().removeCoins(priceSpeedDownBall)
   }
 }
 

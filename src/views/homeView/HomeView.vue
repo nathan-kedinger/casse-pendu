@@ -15,7 +15,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="2" class="ms-6">
+        <v-col cols="3" class="ms-6">
           <v-row>
             <v-card
               theme="light">
@@ -35,7 +35,7 @@
             </v-col>
           </v-row>
         </v-col>
-        <v-col cols="9" >
+        <v-col cols="8" >
           <BreakBrickView />
         </v-col>
       </v-row>
@@ -51,7 +51,7 @@
 
   // TODO - Améliorer le visuel : Changer l'apparence des briques, balle et raquette
   // TODO - Améliorer la logique de gain de pièces
-  // TODO - Ajouter la logique d'utilisation des pièces
+  // TODO - Gain de pièce et de points lorsque toutes les briques sont détruites
   // TODO - Réduire la longueur du dictionnaire (4 lettres < mot < 10 lettres)
   // TODO - Version en anglais
 
