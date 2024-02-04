@@ -24,7 +24,7 @@
           </v-row>
           <v-row>
             <v-col>
-              <v-card>
+              <v-card style="background-color: transparent">
                 <FoundWordsItem/>
               </v-card>
             </v-col>

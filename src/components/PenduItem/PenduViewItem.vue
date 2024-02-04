@@ -6,7 +6,7 @@
     class="personal-background personal-border"
   >
     <div class="d-flex justify-center mb-6">
-      <h1 class="personal-text-police-future personal-big-size "> {{ motAafficher.toString().replaceAll(',', ' ') }} {{nombreErreurs}} </h1>
+      <h1 class="personal-text-police-future personal-big-size "> {{ motAafficher.toString().replaceAll(',', ' ') }}  &emsp; Erreurs : {{nombreErreurs}} </h1>
     </div>
   </v-card>
 

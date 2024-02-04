@@ -83,7 +83,7 @@ export function useOutOfBound(){
 }
 
 // Crée une nouvelle balle
-export function newBall(coins: number){
+export function newBall(){
   const activeBalls = balls.value.filter((ball)=>
     !ball.ballOut
   )
@@ -101,9 +101,8 @@ export function newBall(coins: number){
     },
     ballOut: false
   };
-  if(activeBalls.length < 15 && coins >= priceBall){
+  if(activeBalls.length < 15 ){
     balls.value.push(newBall);
-    useGameStore().removeCoins(priceBall)
   }
 }
 

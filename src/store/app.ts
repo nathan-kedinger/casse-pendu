@@ -10,7 +10,7 @@ export const useGameStore = defineStore('game', {
     gameBegin: false,
     timeCount: 0,
     restartGameStatute : false,
-    playerCoins: 0,
+    playerCoins: parseInt(localStorage.getItem('playerMoney') ?? '0'),
   }),
   getters: {
     newScoreMultiplier(state: {scoreMutliplier : number}){
@@ -37,7 +37,7 @@ export const useGameStore = defineStore('game', {
   actions: {
 
     multiplyScore(){
-      this.scoreMutliplier *=  2;
+      this.scoreMutliplier += 1;
     },
     addToScore(bonus: number){
       this.score += (bonus * this.scoreMutliplier);
