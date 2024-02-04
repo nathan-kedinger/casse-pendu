@@ -18,7 +18,8 @@
         <v-col cols="3" class="ms-6">
           <v-row>
             <v-card
-              theme="light">
+              theme="light"
+              style="background-color: transparent">
               <ScoresItem />
             </v-card>
           </v-row>
